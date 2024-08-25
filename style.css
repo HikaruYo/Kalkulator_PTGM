@@ -1,0 +1,196 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to right, rgba(2, 17, 68, 0.719), rgba(11, 71, 110, 0.8));
+    font-family: 'Arial', sans-serif;
+}
+
+.calculator {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    padding: 20px;
+    width: 500px;
+}
+
+.history-container {
+    height: 50px;
+    overflow-y: scroll;
+    background: #222;
+    color: #d4d0d0;
+    font-size: 1rem;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom: 1px solid #6e6464;
+    padding: 10px;
+}
+
+/* Custom scrollbar styles */
+.history-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.history-container::-webkit-scrollbar-track {
+    background: #333;
+    border-radius: 5px;
+}
+
+.history-container::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 5px;
+    border: 2px solid #333;
+}
+
+.history-container::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
+.history {
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.history-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    color: #d4d0d0;
+    font-size: 1.2rem;
+}
+
+.history-entry .operation {
+    flex: 1;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 10px;
+}
+
+.history-entry .equal-sign {
+    flex-shrink: 0;
+    width: 30px; /* Ukuran tetap untuk tanda '=' */
+    text-align: center;
+    color: #d4d0d0;
+}
+
+.history-entry .result {
+    flex: 1;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 10px;
+    color: white;
+}
+
+.display input {
+    width: 96%;
+    height: 60px;
+    background: #222;
+    color: #fff;
+    font-size: 2rem;
+    border: none;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    text-align: left;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
+button {
+    height: 60px;
+    background: #e0e0e0;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: #d0d0d0;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+button.op {
+    background: #94918c;
+}
+
+button.op.result {
+    grid-column: span 1; /* Membuat tombol '=' memanjang melintasi dua kolom */
+    background: #f44336;
+}
+
+button.op.result:hover {
+    background: #f44336;
+}
+
+button.op:hover {
+    background: #94918c;
+}
+
+button.clear {
+    background: #f44336;
+}
+
+button.clear:hover {
+    background: #e53935;
+}
+
+button.backspace {
+    background: #f44336;
+}
+
+button.backspace:hover {
+    background: #f44336;
+}
+
+button.conv {
+    background: #4caf50;
+}
+
+button.conv:hover {
+    background: #43a047;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 50%;
+    position: relative;
+    animation: modal-open 0.5s ease-out;
+}
+
+@keyframes modal-open {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
