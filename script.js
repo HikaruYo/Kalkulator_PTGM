@@ -50,14 +50,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     break;
                 case 'sqrt':
-                    // Menghitung akar kuadrat
-                    const number = parseFloat(displayValue);
-                    // Memastikan bahwa displayValue adalah angka non-negatif.
-                    if (number < 0) {
-                        displayValue = 'Error';
+                    // Cek apakah karakter terakhir adalah angka atau tutup kurung, tambahkan * sebelum sqrt jika benar
+                    if (displayValue !== '' && !isNaN(displayValue.slice(-1)) || displayValue.slice(-1) === ')') {
+                        displayValue += '*sqrt(';
                     } else {
-                        displayValue = Math.sqrt(number).toString();
+                        displayValue += 'sqrt(';
                     }
+                    display.value = formatDisplay(displayValue);
                     break;
                 case 'pi':
                     // Menambahkan nilai Pi, cek jika display kosong atau bukan operator
@@ -115,21 +114,21 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function evaluateExpression(expr) {
         try {
-            // Hilangkan operator terakhir jika ada di akhir ekspresi
-            if (isOperator(expr.slice(-1))) {
-                expr = expr.slice(0, -1);
-            }
-    
             // Ganti operator khusus seperti '×' dan '÷' dengan '*' dan '/' sebelum evaluasi
             expr = expr.replace(/×/g, '*').replace(/÷/g, '/');
 
-            // Handle faktorial
-            expr = expr.replace(/(\d+)!/g, function(_, n) {
-                return factorial(parseInt(n));
-            });
+            // Ganti 'sqrt(' dengan 'Math.sqrt(' sebelum evaluasi
+            expr = expr.replace(/sqrt\(/g, 'Math.sqrt(');
+
+            // Menutup kurung jika ada kurung sqrt yang tidak tertutup
+            const openSqrtCount = (expr.match(/Math\.sqrt\(/g) || []).length;
+            const closeParenthesesCount = (expr.match(/\)/g) || []).length;
+            if (openSqrtCount > closeParenthesesCount) {
+                expr += ')'.repeat(openSqrtCount - closeParenthesesCount);
+            }
 
             // Sanitasi ekspresi untuk mencegah karakter tidak diinginkan
-            const sanitizedExpr = expr.replace(/[^-()\d/*+.]/g, '');
+            const sanitizedExpr = expr.replace(/[^-()\d/*+.Math.sqrt]/g, '');
 
             return new Function(`return ${sanitizedExpr}`)().toString();
         } catch (e) {
@@ -223,23 +222,36 @@ document.addEventListener('DOMContentLoaded', function() {
      * @returns {string} - Ekspresi yang sudah diformat.
      */
     function formatDisplay(expr) {
+        // Ganti 'sqrt(' dengan '√'
+        expr = expr.replace(/sqrt\(/g, '√');
+
         // Ganti pemisah desimal dari '.' menjadi ','
         expr = expr.replace(/\./g, ',');
 
         // Pisahkan bagian integer dan desimal jika ada
         let parts = expr.split(',');
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Tambahkan pemisah ribuan hanya pada bagian integer
+        // Tambahkan pemisah ribuan hanya pada bagian integer
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.'); 
 
         // Gabungkan kembali bagian integer dan desimal
         return parts.join(',')
                     // Mengubah tampilan perkalian dan pembagian pada display
-                   .replace(/\*/g, '×')
-                   .replace(/\//g, '÷');
+                    .replace(/\*/g, '×')
+                    .replace(/\//g, '÷');
     }
 
     function formatHistory(entry) {
-        return entry.replace(/\*/g, '×').replace(/\//g, '÷');
-    }    
+        // Ganti 'sqrt(' dengan '√'
+        entry = entry.replace(/sqrt\(/g, '√');
+        
+        // Hilangkan semua kurung tutup yang tidak diperlukan di akhir ekspresi
+        while (entry.endsWith(')') && (entry.match(/\(/g) || []).length < (entry.match(/\)/g) || []).length) {
+            entry = entry.slice(0, -1);
+        }
+
+        return entry.replace(/\*/g, '×')
+                    .replace(/\//g, '÷');
+        }    
 
     function updateHistory() {
         historyElement.innerHTML = history.map((entry, index) => {
